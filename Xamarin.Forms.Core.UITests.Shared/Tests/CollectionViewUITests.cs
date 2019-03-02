@@ -279,5 +279,17 @@ namespace Xamarin.Forms.Core.UITests
 				}
 			}
 		}
+
+        [TestCase("DataTemplate Galleries", "DataTemplateSelector")]
+        void VisitAndCheckForItems(string collectionTestName, string subGallery)
+        {
+            VisitInitialGallery(collectionTestName);
+            
+            App.WaitForElement(t => t.Marked(subGallery));
+            App.Tap(t => t.Marked(subGallery));
+
+            App.WaitForElement("weekend");
+            App.WaitForElement("weekday");
+        }
 	}
 }
