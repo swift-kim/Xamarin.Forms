@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms
 {
+	[DebuggerDisplay("{Route}")]
 	public class BaseShellItem : NavigableElement, IPropertyPropagationController, IVisualController, IFlowDirectionController
 	{
 		#region PropertyKeys

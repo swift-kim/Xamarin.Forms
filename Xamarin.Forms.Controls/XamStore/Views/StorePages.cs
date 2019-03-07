@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 
@@ -39,176 +37,160 @@ namespace Xamarin.Forms.Controls.XamStore
 				Text = "Welcome to the " + GetType().Name
 			}, 0, 3, 0, 1);
 
-			grid.Children.Add(MakeButton("Push",
-					() => Navigation.PushAsync((Page)Activator.CreateInstance(GetType()))),
-				0, 1);
+			int left = 0;
+			int top = 1;
 
-			grid.Children.Add(MakeButton("Pop",
-					() => Navigation.PopAsync()),
-				1, 1);
+			void AddChild(View view)
+			{
+				if (left > 2)
+				{
+					left = 0;
+					top++;
+				}
+				grid.Children.Add(view, left++, top);
+			}
 
-			grid.Children.Add(MakeButton("Pop To Root",
-					() => Navigation.PopToRootAsync()),
-				2, 1);
+			AddChild(MakeButton("GoTo Games",
+				async () => await Shell.CurrentShell.GoToAsync($"../IMPL_games", true)));
 
-			grid.Children.Add(MakeButton("Insert",
-					() => Navigation.InsertPageBefore((Page)Activator.CreateInstance(GetType()), this)),
-				0, 2);
+			AddChild(MakeButton("GoTo Home",
+				async () => await Shell.CurrentShell.GoToAsync($"../IMPL_home", true)));
 
-			grid.Children.Add(MakeButton("Remove",
-					() => Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2])),
-				1, 2);
+			AddChild(MakeButton("GoTo Books",
+				async () => await Shell.CurrentShell.GoToAsync($"app:///xamstore/store/IMPL_books", true)));
 
-			grid.Children.Add(MakeButton("Add Search",
-					() => AddSearchHandler("Added Search", SearchBoxVisiblity.Expanded)),
-				2, 2);
+			AddChild(MakeButton("Push",
+					() => Navigation.PushAsync((Page)Activator.CreateInstance(GetType()))));
 
-			grid.Children.Add(MakeButton("Add Toolbar",
-					() => ToolbarItems.Add(new ToolbarItem("Test", "calculator.png", () => { }))),
-				0, 3);
+			AddChild(MakeButton("Pop",
+					() => Navigation.PopAsync()));
 
-			grid.Children.Add(MakeButton("Remove Toolbar",
-					() => ToolbarItems.RemoveAt(0)),
-				1, 3);
+			AddChild(MakeButton("Pop To Root",
+					() => Navigation.PopToRootAsync()));
 
-			grid.Children.Add(MakeButton("Remove Search",
-					RemoveSearchHandler),
-				2, 3);
+			AddChild(MakeButton("Insert",
+					() => Navigation.InsertPageBefore((Page)Activator.CreateInstance(GetType()), this)));
 
-			grid.Children.Add(MakeButton("Add Tab",
-					AddBottomTab),
-				0, 4);
+			AddChild(MakeButton("Remove",
+					() => Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2])));
 
-			grid.Children.Add(MakeButton("Remove Tab",
-					RemoveBottomTab),
-				1, 4);
+			AddChild(MakeButton("Add Search",
+					() => AddSearchHandler("Added Search", SearchBoxVisiblity.Expanded)));
 
-			grid.Children.Add(MakeButton("Hide Tabs",
-					() => Shell.SetTabBarIsVisible(this, false)),
-				2, 4);
+			AddChild(MakeButton("Add Toolbar",
+					() => ToolbarItems.Add(new ToolbarItem("Test", "calculator.png", () => { }))));
 
-			grid.Children.Add(MakeButton("Show Tabs",
-					() => Shell.SetTabBarIsVisible(this, true)),
-				0, 5);
+			AddChild(MakeButton("Remove Toolbar",
+					() => ToolbarItems.RemoveAt(0)));
 
-			grid.Children.Add(MakeButton("Hide Nav",
-					() => Shell.SetNavBarIsVisible(this, false)),
-				1, 5);
+			AddChild(MakeButton("Remove Search",
+					RemoveSearchHandler));
 
-			grid.Children.Add(MakeButton("Show Nav",
-					() => Shell.SetNavBarIsVisible(this, true)),
-				2, 5);
+			AddChild(MakeButton("Add Tab",
+					AddBottomTab));
 
-			grid.Children.Add(MakeButton("Hide Search",
-					() => Shell.GetSearchHandler(this).SearchBoxVisibility = SearchBoxVisiblity.Hidden),
-				0, 6);
+			AddChild(MakeButton("Remove Tab",
+					RemoveBottomTab));
 
-			grid.Children.Add(MakeButton("Collapse Search",
-					() => Shell.GetSearchHandler(this).SearchBoxVisibility = SearchBoxVisiblity.Collapsable),
-				1, 6);
+			AddChild(MakeButton("Hide Tabs",
+					() => Shell.SetTabBarIsVisible(this, false)));
 
-			grid.Children.Add(MakeButton("Show Search",
-					() => Shell.GetSearchHandler(this).SearchBoxVisibility = SearchBoxVisiblity.Expanded),
-				2, 6);
+			AddChild(MakeButton("Show Tabs",
+					() => Shell.SetTabBarIsVisible(this, true)));
 
-			grid.Children.Add(MakeButton("Set Back",
+			AddChild(MakeButton("Hide Nav",
+					() => Shell.SetNavBarIsVisible(this, false)));
+
+			AddChild(MakeButton("Show Nav",
+					() => Shell.SetNavBarIsVisible(this, true)));
+
+			AddChild(MakeButton("Hide Search",
+					() => Shell.GetSearchHandler(this).SearchBoxVisibility = SearchBoxVisiblity.Hidden));
+
+			AddChild(MakeButton("Collapse Search",
+					() => Shell.GetSearchHandler(this).SearchBoxVisibility = SearchBoxVisiblity.Collapsable));
+
+			AddChild(MakeButton("Show Search",
+					() => Shell.GetSearchHandler(this).SearchBoxVisibility = SearchBoxVisiblity.Expanded));
+
+			AddChild(MakeButton("Set Back",
 					() => Shell.SetBackButtonBehavior(this, new BackButtonBehavior()
 					{
 						IconOverride = "calculator.png"
-					})),
-				0, 7);
+					})));
 
-			grid.Children.Add(MakeButton("Clear Back",
-					() => Shell.SetBackButtonBehavior(this, null)),
-				1, 7);
+			AddChild(MakeButton("Clear Back",
+					() => Shell.SetBackButtonBehavior(this, null)));
 
-			grid.Children.Add(MakeButton("Disable Tab",
-					() => ((Forms.ShellSection)Parent.Parent).IsEnabled = false),
-				2, 7);
+			AddChild(MakeButton("Disable Tab",
+					() => ((Forms.ShellSection)Parent.Parent).IsEnabled = false));
 
-			grid.Children.Add(MakeButton("Enable Tab",
-					() => ((Forms.ShellSection)Parent.Parent).IsEnabled = true),
-				0, 8);
+			AddChild(MakeButton("Enable Tab",
+					() => ((Forms.ShellSection)Parent.Parent).IsEnabled = true));
 
-			grid.Children.Add(MakeButton("Enable Search",
-					() => Shell.GetSearchHandler(this).IsSearchEnabled = true),
-				1, 8);
+			AddChild(MakeButton("Enable Search",
+					() => Shell.GetSearchHandler(this).IsSearchEnabled = true));
 
-			grid.Children.Add(MakeButton("Disable Search",
-					() => Shell.GetSearchHandler(this).IsSearchEnabled = false),
-				2, 8);
+			AddChild(MakeButton("Disable Search",
+					() => Shell.GetSearchHandler(this).IsSearchEnabled = false));
 
-			grid.Children.Add(MakeButton("Set Title",
-					() => Title = "New Title"),
-				0, 9);
+			AddChild(MakeButton("Set Title",
+					() => Title = "New Title"));
 
-			grid.Children.Add(MakeButton("Set Tab Title",
-					() => ((Forms.ShellSection)Parent.Parent).Title = "New Title"),
-				1, 9);
+			AddChild(MakeButton("Set Tab Title",
+					() => ((Forms.ShellSection)Parent.Parent).Title = "New Title"));
 
-			grid.Children.Add(MakeButton("Set GroupTitle",
-					() => ((ShellItem)Parent.Parent.Parent).Title = "New Title"),
-				2, 9);
+			AddChild(MakeButton("Set GroupTitle",
+					() => ((ShellItem)Parent.Parent.Parent).Title = "New Title"));
 
-			grid.Children.Add(MakeButton("New Tab Icon",
-					() => ((Forms.ShellSection)Parent.Parent).Icon = "calculator.png"),
-				0, 10);
+			AddChild(MakeButton("New Tab Icon",
+					() => ((Forms.ShellSection)Parent.Parent).Icon = "calculator.png"));
 
-			grid.Children.Add(MakeButton("Flyout Disabled",
-					() => Shell.SetFlyoutBehavior(this, FlyoutBehavior.Disabled)),
-				1, 10);
+			AddChild(MakeButton("Flyout Disabled",
+					() => Shell.SetFlyoutBehavior(this, FlyoutBehavior.Disabled)));
 
-			grid.Children.Add(MakeButton("Flyout Collapse",
-					() => Shell.SetFlyoutBehavior(this, FlyoutBehavior.Flyout)),
-				2, 10);
+			AddChild(MakeButton("Flyout Collapse",
+					() => Shell.SetFlyoutBehavior(this, FlyoutBehavior.Flyout)));
 
-			grid.Children.Add(MakeButton("Flyout Locked",
-					() => Shell.SetFlyoutBehavior(this, FlyoutBehavior.Locked)),
-				0, 11);
+			AddChild(MakeButton("Flyout Locked",
+					() => Shell.SetFlyoutBehavior(this, FlyoutBehavior.Locked)));
 
-			grid.Children.Add(MakeButton("Add TitleView",
+			AddChild(MakeButton("Add TitleView",
 					() => Shell.SetTitleView(this, new Label {
 						BackgroundColor = Color.Purple,
 						Margin = new Thickness(5, 10),
 						Text = "TITLE VIEW"
-					})),
-				1, 11);
+					})));
 
-			grid.Children.Add(MakeButton("Null TitleView",
-					() => Shell.SetTitleView(this, null)),
-				2, 11);
+			AddChild(MakeButton("Null TitleView",
+					() => Shell.SetTitleView(this, null)));
 
-			grid.Children.Add(MakeButton("FH Fixed",
-					() => ((Shell)Parent.Parent.Parent.Parent).FlyoutHeaderBehavior = FlyoutHeaderBehavior.Fixed),
-				0, 12);
+			AddChild(MakeButton("FH Fixed",
+					() => ((Shell)Parent.Parent.Parent.Parent).FlyoutHeaderBehavior = FlyoutHeaderBehavior.Fixed));
 
-			grid.Children.Add(MakeButton("FH Scroll",
-					() => ((Shell)Parent.Parent.Parent.Parent).FlyoutHeaderBehavior = FlyoutHeaderBehavior.Scroll),
-				1, 12);
+			AddChild(MakeButton("FH Scroll",
+					() => ((Shell)Parent.Parent.Parent.Parent).FlyoutHeaderBehavior = FlyoutHeaderBehavior.Scroll));
 
-			grid.Children.Add(MakeButton("FH Collapse",
-					() => ((Shell)Parent.Parent.Parent.Parent).FlyoutHeaderBehavior = FlyoutHeaderBehavior.CollapseOnScroll),
-				2, 12);
+			AddChild(MakeButton("FH Collapse",
+					() => ((Shell)Parent.Parent.Parent.Parent).FlyoutHeaderBehavior = FlyoutHeaderBehavior.CollapseOnScroll));
 
-			grid.Children.Add(MakeButton("Add TopTab",
-					AddTopTab),
-				0, 13);
+			AddChild(MakeButton("Add TopTab",
+					AddTopTab));
 
-			grid.Children.Add(MakeButton("Remove TopTab",
-					RemoveTopTab),
-				1, 13);
+			AddChild(MakeButton("Remove TopTab",
+					RemoveTopTab));
 
-			grid.Children.Add(MakeSwitch("Nav Visible", out _navBarVisibleSwitch), 0, 14);
-			grid.Children.Add(MakeSwitch("Tab Visible", out _tabBarVisibleSwitch), 1, 14);
+			left = 0; top++;
+			AddChild(MakeSwitch("Nav Visible", out _navBarVisibleSwitch));
+			AddChild(MakeSwitch("Tab Visible", out _tabBarVisibleSwitch));
 
-			grid.Children.Add(MakeButton("Push Special",
+			AddChild(MakeButton("Push Special",
 					() => {
 					var page = (Page)Activator.CreateInstance(GetType());
 						Shell.SetNavBarIsVisible (page, _navBarVisibleSwitch.IsToggled);
 						Shell.SetTabBarIsVisible(page, _tabBarVisibleSwitch.IsToggled);
 						Navigation.PushAsync(page);
-					}),
-				2, 14);
+					}));
 
 
 			Content = new ScrollView { Content = grid };

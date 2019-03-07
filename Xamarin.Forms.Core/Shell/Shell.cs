@@ -337,7 +337,7 @@ namespace Xamarin.Forms
 
 			Element item = CurrentItem;
 			var list = new List<string> { url.Trim('/') };
-			while (item != null)
+			while (item != null && !(item is IApplicationController))
 			{
 				var route = Routing.GetRoute(item)?.Trim('/');
 				if (string.IsNullOrEmpty(route))
@@ -372,14 +372,14 @@ namespace Xamarin.Forms
 
 			var parts = path.Substring(1).Split('/').ToList();
 
-			if (path.Length < 2)
+			if (parts.Count < 2)
 				throw new InvalidOperationException("Path must be at least 2 items long in Shell navigation");
 
 			var shellRoute = parts[0];
 
 			var expectedShellRoute = Routing.GetRoute(this) ?? string.Empty;
 			if (expectedShellRoute != shellRoute)
-				throw new NotImplementedException();
+				throw new NotImplementedException($"Expected route is \"{expectedShellRoute}\". Actual route \"{shellRoute}\"");
 			else
 				parts.RemoveAt(0);
 
