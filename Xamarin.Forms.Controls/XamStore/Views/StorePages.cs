@@ -50,14 +50,14 @@ namespace Xamarin.Forms.Controls.XamStore
 				grid.Children.Add(view, left++, top);
 			}
 
-			AddChild(MakeButton("GoTo Games",
-				async () => await Shell.CurrentShell.GoToAsync($"../IMPL_games", true)));
+			AddChild(MakeButton("GoTo installed",
+				async () => await Shell.CurrentShell.GoToAsync($"../apps/installed", true)));
 
-			AddChild(MakeButton("GoTo Home",
-				async () => await Shell.CurrentShell.GoToAsync($"../IMPL_home", true)));
+			AddChild(MakeButton("GoTo updates",
+				async () => await Shell.CurrentShell.GoToAsync($"../apps/updates", true)));
 
-			AddChild(MakeButton("GoTo Books",
-				async () => await Shell.CurrentShell.GoToAsync($"app:///xamstore/store/IMPL_books", true)));
+			AddChild(MakeButton("GoTo music",
+				async () => await Shell.CurrentShell.GoToAsync($"app:///xamstore/store/music", true)));
 
 			AddChild(MakeButton("Push",
 					() => Navigation.PushAsync((Page)Activator.CreateInstance(GetType()))));

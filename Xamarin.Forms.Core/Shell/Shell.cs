@@ -372,7 +372,7 @@ namespace Xamarin.Forms
 
 			var parts = path.Substring(1).Split('/').ToList();
 
-			if (path.Length < 2)
+			if (parts.Count < 2)
 				throw new InvalidOperationException("Path must be at least 2 items long in Shell navigation");
 
 			var shellRoute = parts[0];
