@@ -7,6 +7,11 @@ namespace Xamarin.Forms.Controls.XamStore
 {
     public class BasePage : ContentPage
 	{
+		Grid grid;
+		int _left = 0;
+		int _top = 1;
+		const int _cols = 3;
+
 		private Button MakeButton (string title, Action callback)
 		{
 			var result = new Button();
@@ -19,9 +24,8 @@ namespace Xamarin.Forms.Controls.XamStore
 		{
 			Title = title;
 
-			var grid = new Grid()
+			grid = new Grid()
 			{
-				Padding = 20,
 				ColumnDefinitions =
 				{
 					new ColumnDefinition {Width = GridLength.Star},
@@ -37,19 +41,13 @@ namespace Xamarin.Forms.Controls.XamStore
 				Text = "Welcome to the " + GetType().Name
 			}, 0, 3, 0, 1);
 
-			int left = 0;
-			int top = 1;
+			AddChild(MakeButton("Show Alert",
+				async () => {
+					var result = await DisplayAlert("Title", "Message", "Ok", "Cancel");
+					Console.WriteLine($"Alert result: {result}");
+				}));
 
-			void AddChild(View view)
-			{
-				if (left > 2)
-				{
-					left = 0;
-					top++;
-				}
-				grid.Children.Add(view, left++, top);
-			}
-
+			AddSeparator("Go to");
 			AddChild(MakeButton("GoTo installed",
 				async () => await Shell.CurrentShell.GoToAsync($"../apps/installed", true)));
 
@@ -59,6 +57,7 @@ namespace Xamarin.Forms.Controls.XamStore
 			AddChild(MakeButton("GoTo music",
 				async () => await Shell.CurrentShell.GoToAsync($"app:///xamstore/store/music", true)));
 
+			AddSeparator("Pages");
 			AddChild(MakeButton("Push",
 					() => Navigation.PushAsync((Page)Activator.CreateInstance(GetType()))));
 
@@ -77,6 +76,7 @@ namespace Xamarin.Forms.Controls.XamStore
 			AddChild(MakeButton("Add Search",
 					() => AddSearchHandler("Added Search", SearchBoxVisiblity.Expanded)));
 
+			AddSeparator("Toolbars");
 			AddChild(MakeButton("Add Toolbar",
 					() => ToolbarItems.Add(new ToolbarItem("Test", "calculator.png", () => { }))));
 
@@ -92,6 +92,12 @@ namespace Xamarin.Forms.Controls.XamStore
 			AddChild(MakeButton("Remove Tab",
 					RemoveBottomTab));
 
+			AddChild(MakeButton("Disable Tab",
+					() => ((ShellSection)Parent.Parent).IsEnabled = false));
+
+			AddChild(MakeButton("Enable Tab",
+					() => ((ShellSection)Parent.Parent).IsEnabled = true));
+
 			AddChild(MakeButton("Hide Tabs",
 					() => Shell.SetTabBarIsVisible(this, false)));
 
@@ -104,6 +110,11 @@ namespace Xamarin.Forms.Controls.XamStore
 			AddChild(MakeButton("Show Nav",
 					() => Shell.SetNavBarIsVisible(this, true)));
 
+			AddChild(MakeButton("Add TopTab", AddTopTab));
+
+			AddChild(MakeButton("Remove TopTab", RemoveTopTab));
+
+			AddSeparator("Search");
 			AddChild(MakeButton("Hide Search",
 					() => Shell.GetSearchHandler(this).SearchBoxVisibility = SearchBoxVisiblity.Hidden));
 
@@ -113,6 +124,13 @@ namespace Xamarin.Forms.Controls.XamStore
 			AddChild(MakeButton("Show Search",
 					() => Shell.GetSearchHandler(this).SearchBoxVisibility = SearchBoxVisiblity.Expanded));
 
+			AddChild(MakeButton("Enable Search",
+					() => Shell.GetSearchHandler(this).IsSearchEnabled = true));
+
+			AddChild(MakeButton("Disable Search",
+					() => Shell.GetSearchHandler(this).IsSearchEnabled = false));
+
+			AddSeparator("Back button");
 			AddChild(MakeButton("Set Back",
 					() => Shell.SetBackButtonBehavior(this, new BackButtonBehavior()
 					{
@@ -122,30 +140,20 @@ namespace Xamarin.Forms.Controls.XamStore
 			AddChild(MakeButton("Clear Back",
 					() => Shell.SetBackButtonBehavior(this, null)));
 
-			AddChild(MakeButton("Disable Tab",
-					() => ((Forms.ShellSection)Parent.Parent).IsEnabled = false));
-
-			AddChild(MakeButton("Enable Tab",
-					() => ((Forms.ShellSection)Parent.Parent).IsEnabled = true));
-
-			AddChild(MakeButton("Enable Search",
-					() => Shell.GetSearchHandler(this).IsSearchEnabled = true));
-
-			AddChild(MakeButton("Disable Search",
-					() => Shell.GetSearchHandler(this).IsSearchEnabled = false));
-
+			AddSeparator("Title");
 			AddChild(MakeButton("Set Title",
 					() => Title = "New Title"));
 
 			AddChild(MakeButton("Set Tab Title",
-					() => ((Forms.ShellSection)Parent.Parent).Title = "New Title"));
+					() => ((ShellSection)Parent.Parent).Title = "New Title"));
 
 			AddChild(MakeButton("Set GroupTitle",
 					() => ((ShellItem)Parent.Parent.Parent).Title = "New Title"));
 
 			AddChild(MakeButton("New Tab Icon",
-					() => ((Forms.ShellSection)Parent.Parent).Icon = "calculator.png"));
+					() => ((ShellSection)Parent.Parent).Icon = "calculator.png"));
 
+			AddSeparator("Flyout");
 			AddChild(MakeButton("Flyout Disabled",
 					() => Shell.SetFlyoutBehavior(this, FlyoutBehavior.Disabled)));
 
@@ -154,16 +162,6 @@ namespace Xamarin.Forms.Controls.XamStore
 
 			AddChild(MakeButton("Flyout Locked",
 					() => Shell.SetFlyoutBehavior(this, FlyoutBehavior.Locked)));
-
-			AddChild(MakeButton("Add TitleView",
-					() => Shell.SetTitleView(this, new Label {
-						BackgroundColor = Color.Purple,
-						Margin = new Thickness(5, 10),
-						Text = "TITLE VIEW"
-					})));
-
-			AddChild(MakeButton("Null TitleView",
-					() => Shell.SetTitleView(this, null)));
 
 			AddChild(MakeButton("FH Fixed",
 					() => ((Shell)Parent.Parent.Parent.Parent).FlyoutHeaderBehavior = FlyoutHeaderBehavior.Fixed));
@@ -174,13 +172,18 @@ namespace Xamarin.Forms.Controls.XamStore
 			AddChild(MakeButton("FH Collapse",
 					() => ((Shell)Parent.Parent.Parent.Parent).FlyoutHeaderBehavior = FlyoutHeaderBehavior.CollapseOnScroll));
 
-			AddChild(MakeButton("Add TopTab",
-					AddTopTab));
+			AddSeparator("TitleView");
+			AddChild(MakeButton("Add TitleView",
+					() => Shell.SetTitleView(this, new Label {
+						BackgroundColor = Color.Purple,
+						Margin = new Thickness(5, 10),
+						Text = "TITLE VIEW"
+					})));
 
-			AddChild(MakeButton("Remove TopTab",
-					RemoveTopTab));
+			AddChild(MakeButton("Null TitleView",
+					() => Shell.SetTitleView(this, null)));
 
-			left = 0; top++;
+			AddSeparator();
 			AddChild(MakeSwitch("Nav Visible", out _navBarVisibleSwitch));
 			AddChild(MakeSwitch("Tab Visible", out _tabBarVisibleSwitch));
 
@@ -192,13 +195,42 @@ namespace Xamarin.Forms.Controls.XamStore
 						Navigation.PushAsync(page);
 					}));
 
-
 			Content = new ScrollView { Content = grid };
 
 			//var listView = new ListView();
 			//listView.ItemsSource = Enumerable.Range(0, 1000).ToList();
 
 			//Content = listView;
+		}
+
+		void AddChild(View view)
+		{
+			if (_left > _cols - 1)
+			{
+				_left = 0;
+				_top++;
+			}
+			grid.Children.Add(view, _left++, _top);
+		}
+
+		void AddSeparator(string label = "")
+		{
+			var stack = new StackLayout { VerticalOptions = LayoutOptions.End };
+			if (!string.IsNullOrEmpty(label))
+				stack.Children.Add(new Label {
+					HorizontalTextAlignment = TextAlignment.Center,
+					Text = label
+				});
+			stack.Children.Add(new BoxView
+			{
+				BackgroundColor = Color.Black,
+				HorizontalOptions = LayoutOptions.Fill,
+				VerticalOptions = LayoutOptions.Fill,
+				HeightRequest = 1.5
+			});
+			grid.Children.AddVertical(stack);
+			_left = 0;
+			_top +=2;
 		}
 
 		Switch _navBarVisibleSwitch;
